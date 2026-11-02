@@ -34,62 +34,58 @@ Ograniczenia formatów, które wynikają z API platform:
 
 ---
 
-## Instalacja na serwerze (zalecane)
+## Instalacja na serwerze
 
 Potrzebujesz:
-- serwera VPS z Linuksem (wystarczy 1 vCPU i 1–2 GB RAM, np. Hetzner, Mikrus, OVH),
-- domeny lub subdomeny (np. `panel.twojadomena.pl`) z rekordem **A** wskazującym na IP serwera.
+- **serwera VPS** z Ubuntu lub Debianem (wystarczy 1 vCPU i 1–2 GB RAM, np. Hetzner, Mikrus, OVH),
+- **domeny lub subdomeny** (np. `panel.twojadomena.pl`) z rekordem **A** w DNS wskazującym na IP serwera.
 
 HTTPS jest wymagany: Instagram i Facebook pobierają pliki z Twojego serwera, a TikTok przyjmuje
-tylko adresy `https://`. Certyfikat wystawi automatycznie Caddy, który jest w `docker-compose.yml`.
+tylko adresy `https://`. Certyfikat wystawia się automatycznie.
+
+### Instalacja jednym poleceniem
+
+Zaloguj się na serwer przez SSH jako root i wklej:
 
 ```bash
-# na serwerze (Ubuntu/Debian)
-curl -fsSL https://get.docker.com | sh
+curl -fsSL https://raw.githubusercontent.com/kototalny/jarvis/main/install.sh | bash
+```
+
+Skrypt zainstaluje Dockera, pobierze panel, zapyta o domenę i hasło, a potem wszystko uruchomi.
+Na końcu wyświetli adres panelu. Potem:
+
+1. Otwórz panel w przeglądarce i zaloguj się.
+2. Wejdź w **Ustawienia** i wpisz klucze API platform (instrukcja niżej).
+3. Wejdź w **Konta** i kliknij **Połącz** przy każdej platformie.
+
+**Aktualizacja** do nowej wersji: uruchom to samo polecenie jeszcze raz. Dane, konta i ustawienia
+zostają.
+
+Panel jest zainstalowany w `/opt/jarvis`. Przydatne polecenia:
+
+```bash
+cd /opt/jarvis && docker compose logs -f app
 ```
 
 ```bash
-git clone https://github.com/kototalny/jarvis.git
+cd /opt/jarvis && docker compose restart
 ```
+
+Hasło do panelu zmienisz w pliku `/opt/jarvis/.env` (`ADMIN_PASSWORD`). Potem uruchom:
 
 ```bash
-cd jarvis && cp .env.example .env
+cd /opt/jarvis && docker compose up -d
 ```
 
-Uzupełnij `.env`: `APP_URL`, `DOMAIN`, `ADMIN_PASSWORD`, `SESSION_SECRET`. Losowy sekret
-wygenerujesz poleceniem:
-
-```bash
-openssl rand -hex 32
-```
-
-Uruchomienie:
-
-```bash
-docker compose up -d --build
-```
-
-Panel będzie pod `https://twoja-domena`. Klucze platform dopisujesz do `.env` stopniowo (instrukcje
-niżej). Po każdej zmianie `.env` uruchom ponownie:
-
-```bash
-docker compose up -d
-```
-
-Aktualizacja do nowej wersji z GitHuba:
-
-```bash
-git pull && docker compose up -d --build
-```
-
-Baza danych i wgrane pliki leżą w wolumenie Dockera `jarvis_data` i przetrwają aktualizacje.
+Baza danych i wgrane pliki leżą w wolumenie Dockera `jarvis_data`.
 
 ---
 
 ## Podłączanie platform
 
-Na stronie **Konta** panel pokazuje dokładny **Redirect URI** dla każdej platformy. Wklejasz go w
-konsoli deweloperskiej. Ma postać `https://twoja-domena/api/callback/<meta|youtube|tiktok>`.
+Klucze z konsol deweloperskich wpisujesz w panelu na stronie **Ustawienia**. Ta strona pokazuje też
+dokładny **Redirect URI** dla każdej platformy, który wklejasz w konsoli deweloperskiej. Ma postać
+`https://twoja-domena/api/callback/<meta|youtube|tiktok>`.
 
 Wszystkie platformy wymagają też linku do **polityki prywatności** (i czasem regulaminu). Możesz
 wykorzystać stronę ze swojego sklepu albo dowolną prostą stronę z polityką.
@@ -107,12 +103,12 @@ Potem załóż aplikację:
 2. Typ lub przypadek użycia: **Business** („Inne” → „Business”, jeśli kreator o to pyta).
 3. Dodaj produkty **Facebook Login** (albo „Facebook Login for Business”) oraz **Instagram Graph API**.
 4. W ustawieniach logowania, w polu **Valid OAuth Redirect URIs**, wpisz Redirect URI z panelu.
-5. **Ustawienia → Podstawowe**: skopiuj **App ID** i **App Secret** do `.env` (`META_APP_ID`,
-   `META_APP_SECRET`). Dodaj tam też link do polityki prywatności.
+5. **Ustawienia → Podstawowe**: skopiuj **App ID** i **App Secret** do panelu (**Ustawienia**). W konsoli
+   Meta dodaj też link do polityki prywatności.
 6. Jeśli aplikacja ma „Facebook Login for Business”, utwórz w nim **Konfigurację** z uprawnieniami:
    `pages_show_list`, `pages_read_engagement`, `pages_manage_posts`, `business_management`,
-   `instagram_basic`, `instagram_content_publish`. Jej ID wpisz do `META_CONFIG_ID`. Przy zwykłym
-   „Facebook Login” zostaw to pole puste.
+   `instagram_basic`, `instagram_content_publish`. Jej ID wpisz w panelu w pole **Configuration ID**.
+   Przy zwykłym „Facebook Login” zostaw to pole puste.
 7. Aplikacja może zostać w **trybie deweloperskim**. Jako jej administrator masz wszystkie uprawnienia
    bez App Review.
 8. W panelu kliknij **Konta → Facebook + Instagram → Połącz** i zaznacz swoje strony.
@@ -127,7 +123,7 @@ Tokeny stron pobrane w ten sposób nie wygasają. Jeśli zmienisz hasło do Face
    polityki prywatności. Dodaj swój adres Gmail jako **test user**.
 4. **Credentials → Create credentials → OAuth client ID** → typ **Web application**. W polu
    **Authorized redirect URIs** wpisz Redirect URI z panelu.
-5. Client ID i Client secret wpisz do `.env` (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`).
+5. Client ID i Client secret wpisz w panelu (**Ustawienia**).
 6. **Ważne:** na ekranie zgody kliknij **Publish app** (status „In production”). W trybie „Testing” Google
    unieważnia dostęp co 7 dni. Weryfikacja aplikacji nie jest potrzebna do prywatnego użytku. Przy
    logowaniu zobaczysz ostrzeżenie „Google nie zweryfikował tej aplikacji”: kliknij *Zaawansowane →
@@ -145,8 +141,8 @@ and Quota Extension Form**. Do tego czasu panel pokaże informację, że film je
 4. Zakres uprawnień (scopes): `user.info.basic`, `video.upload`, `video.publish`.
 5. W Login Kit wpisz Redirect URI z panelu (musi być `https://`).
 6. Zanim aplikacja przejdzie przegląd, użyj trybu **Sandbox**: utwórz sandbox i dodaj w nim swoje konto
-   TikTok jako **Target user**. Klucze sandboxa (Client key i Client secret) wpisz do `.env`
-   (`TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`).
+   TikTok jako **Target user**. Klucze sandboxa (Client key i Client secret) wpisz w panelu
+   (**Ustawienia**).
 7. W panelu kliknij **Konta → TikTok → Połącz**.
 
 Sposoby publikacji na TikToku (wybierasz przy każdym poście):
@@ -193,7 +189,7 @@ src/
   app/(panel)/        strony: kalendarz, nowy post, posty, konta
   app/api/            upload plików, logowanie OAuth, wylogowanie
   app/media/          serwowanie plików dla platform
-  app/actions.ts      akcje serwera (tworzenie postów, ponawianie, usuwanie…)
+  app/actions.ts      akcje serwera (tworzenie postów, ponawianie, ustawienia…)
   lib/platforms/      integracje: meta.ts, youtube.ts, tiktok.ts
   lib/scheduler.ts    harmonogram publikacji
   lib/db.ts           baza danych

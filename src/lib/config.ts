@@ -1,12 +1,7 @@
-export type Platform = "facebook" | "instagram" | "youtube" | "tiktok";
-export type Provider = "meta" | "youtube" | "tiktok";
+import type { Provider } from "./platform-meta";
+import { getSetting } from "./settings";
 
-export const PLATFORM_LABELS: Record<Platform, string> = {
-  facebook: "Facebook",
-  instagram: "Instagram",
-  youtube: "YouTube",
-  tiktok: "TikTok",
-};
+export { PLATFORM_LABELS, type Platform, type Provider } from "./platform-meta";
 
 function env(name: string, fallback = ""): string {
   return (process.env[name] ?? fallback).trim();
@@ -30,33 +25,33 @@ export const config = {
   },
   meta: {
     get appId() {
-      return env("META_APP_ID");
+      return getSetting("META_APP_ID");
     },
     get appSecret() {
-      return env("META_APP_SECRET");
+      return getSetting("META_APP_SECRET");
     },
     get graphVersion() {
       return env("META_GRAPH_VERSION", "v23.0");
     },
     /** Optional: configuration ID from "Facebook Login for Business" (used instead of scopes). */
     get configId() {
-      return env("META_CONFIG_ID");
+      return getSetting("META_CONFIG_ID");
     },
   },
   google: {
     get clientId() {
-      return env("GOOGLE_CLIENT_ID");
+      return getSetting("GOOGLE_CLIENT_ID");
     },
     get clientSecret() {
-      return env("GOOGLE_CLIENT_SECRET");
+      return getSetting("GOOGLE_CLIENT_SECRET");
     },
   },
   tiktok: {
     get clientKey() {
-      return env("TIKTOK_CLIENT_KEY");
+      return getSetting("TIKTOK_CLIENT_KEY");
     },
     get clientSecret() {
-      return env("TIKTOK_CLIENT_SECRET");
+      return getSetting("TIKTOK_CLIENT_SECRET");
     },
   },
 };

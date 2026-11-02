@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { DatabaseSync as DatabaseSyncType } from "node:sqlite";
-import { config, type Platform } from "./config";
+import type { Platform } from "./platform-meta";
 
 // node:sqlite is loaded at runtime so the bundler never tries to resolve it.
 const { DatabaseSync } = process.getBuiltinModule("node:sqlite") as typeof import("node:sqlite");
@@ -108,6 +108,11 @@ CREATE TABLE IF NOT EXISTS post_targets (
   published_at INTEGER
 );
 CREATE INDEX IF NOT EXISTS post_targets_post ON post_targets(post_id);
+
+CREATE TABLE IF NOT EXISTS settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
 `;
 
 declare global {
@@ -116,7 +121,7 @@ declare global {
 }
 
 export function dataPath(...parts: string[]): string {
-  return path.resolve(config.dataDir, ...parts);
+  return path.resolve((process.env.DATA_DIR || "./data").trim(), ...parts);
 }
 
 export function db(): DatabaseSyncType {

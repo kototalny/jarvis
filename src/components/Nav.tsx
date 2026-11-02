@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/nowy", label: "Nowy post" },
   { href: "/posty", label: "Posty" },
   { href: "/konta", label: "Konta" },
+  { href: "/ustawienia", label: "Ustawienia" },
 ];
 
 export function Nav() {

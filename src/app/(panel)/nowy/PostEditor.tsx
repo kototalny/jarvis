@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState, useTransition } from "react";
 import { PlatformIcon } from "@/components/PlatformIcon";
-import { PLATFORM_LABELS, type Platform } from "@/lib/config";
+import { PLATFORM_LABELS, type Platform } from "@/lib/platform-meta";
 import type { PLATFORM_RULES } from "@/lib/platforms";
 import { createPost } from "../../actions";
 

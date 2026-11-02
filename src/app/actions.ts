@@ -187,3 +187,21 @@ export async function removeAccount(accountId: number) {
   revalidatePath("/konta");
   redirect(`/konta?ok=${encodeURIComponent("Konto odłączone.")}`);
 }
+
+// ---------------------------------------------------------------------------
+// Settings (API keys)
+
+export async function saveSettings(form: FormData) {
+  await requireAuth();
+  const { SETTING_KEYS, SECRET_KEYS, setSetting } = await import("@/lib/settings");
+  for (const key of SETTING_KEYS) {
+    const raw = form.get(key);
+    if (raw === null) continue;
+    const value = String(raw).trim();
+    // Secrets are never sent back to the browser: an empty field means "keep the saved value".
+    if (SECRET_KEYS.includes(key) && value === "") continue;
+    setSetting(key, value);
+  }
+  revalidatePath("/", "layout");
+  redirect(`/ustawienia?ok=${encodeURIComponent("Zapisano ustawienia.")}`);
+}

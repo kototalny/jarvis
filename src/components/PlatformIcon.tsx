@@ -1,4 +1,4 @@
-import type { Platform } from "@/lib/config";
+import type { Platform } from "@/lib/platform-meta";
 
 const LETTERS: Record<Platform, string> = { facebook: "f", instagram: "IG", youtube: "▶", tiktok: "♪" };
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PlatformIcon } from "@/components/PlatformIcon";
 import { listAccounts, listPosts, listUpcoming, type PostWithTargets } from "@/lib/db";
 import { dayKey, formatDateTime, formatTime, POST_STATUS_LABELS, zonedMidnight } from "@/lib/format";
-import type { Platform } from "@/lib/config";
+import type { Platform } from "@/lib/platform-meta";
 
 const MONTHS = [
   "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",

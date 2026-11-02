@@ -3,26 +3,23 @@ import { config, isProviderConfigured, PLATFORM_LABELS, redirectUri, type Platfo
 import { listAccounts } from "@/lib/db";
 import { removeAccount } from "../../actions";
 
-const PROVIDERS: { id: Provider; label: string; platforms: Platform[]; env: string; hint: string }[] = [
+const PROVIDERS: { id: Provider; label: string; platforms: Platform[]; hint: string }[] = [
   {
     id: "meta",
     label: "Facebook + Instagram",
     platforms: ["facebook", "instagram"],
-    env: "META_APP_ID, META_APP_SECRET",
     hint: "Łączy wszystkie Twoje strony na Facebooku i konta Instagram (Business/Twórca) do nich podpięte.",
   },
   {
     id: "youtube",
     label: "YouTube",
     platforms: ["youtube"],
-    env: "GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET",
     hint: "Bez audytu Google filmy z API trafiają na YouTube jako prywatne.",
   },
   {
     id: "tiktok",
     label: "TikTok",
     platforms: ["tiktok"],
-    env: "TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET",
     hint: "Bez audytu TikTok: film trafia do skrzynki w aplikacji albo publikuje się jako prywatny.",
   },
 ];
@@ -93,9 +90,9 @@ export default async function AccountsPage({ searchParams }: { searchParams: Pro
                   {connected.length ? "Połącz ponownie / dodaj" : "Połącz"}
                 </a>
               ) : (
-                <div className="alert alert-info small">
-                  Uzupełnij w pliku <code>.env</code>: <code>{p.env}</code> i uruchom panel ponownie.
-                </div>
+                <a className="btn" href="/ustawienia">
+                  Najpierw wpisz klucze API w Ustawieniach →
+                </a>
               )}
               <div className="small muted">
                 Adres przekierowania (Redirect URI) do wpisania w konsoli deweloperskiej:
