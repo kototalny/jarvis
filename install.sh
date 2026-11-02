@@ -33,10 +33,10 @@ docker compose version >/dev/null 2>&1 || die "Brak 'docker compose'. Zainstaluj
 # --- Kod ---------------------------------------------------------------------
 if [ -d "$DIR/.git" ]; then
   say "Aktualizuję kod w $DIR"
-  git -C "$DIR" pull --ff-only
+  git -C "$DIR" pull --ff-only origin main
 else
   say "Pobieram panel do $DIR"
-  git clone --depth 1 "$REPO_URL" "$DIR"
+  git clone --depth 1 --branch main "$REPO_URL" "$DIR"
 fi
 cd "$DIR"
 
